@@ -22,11 +22,9 @@ class Login extends CI_Controller {
 		);
 		$captcha = create_captcha($config);
 
-		// Unset previous captcha and set new captcha word
 		$this->session->unset_userdata('captchaCode');
 		$this->session->set_userdata('captchaCode', $captcha['word']);
 
-		// Pass captcha image to view
 		$fetch['captchaImg'] = $captcha['image'];
 
 		$fetch['data'] = $this->Loginmodel->alldata();
@@ -35,21 +33,23 @@ class Login extends CI_Controller {
 
 	public function loginerror()
 	{
-		$this->form_validation->set_rules('fname','first name','required|alpha');
-		$this->form_validation->set_rules('lname','last name', 'required');
-		$this->form_validation->set_rules('mobile', 'Mobile', 'required|numeric');
+		$this->form_validation->set_rules('fname','first name','trim|required|alpha');
+		$this->form_validation->set_rules('lname','last name', 'trim|required');
+		$this->form_validation->set_rules('mobile', 'Mobile', 'trim|required|numeric');
 		$this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
-		$this->form_validation->set_rules('password', 'Password', 'required');
+		$this->form_validation->set_rules('password', 'Password', 'callback_valid_password');
 		$this->form_validation->set_rules('companyname', 'Companyname', 'required');
 		$this->form_validation->set_rules('designation', 'Designation', 'required');
 		$this->form_validation->set_rules('companysize', 'Companysize', 'required|numeric');
 
+		$this->form_validation->set_message('password', 'Password must have at least alpha and numeric characters.');
+
 		if($this->form_validation->run())
 		{
 			$inputCaptcha = $this->input->post('captcha');
-			$sessCaptcha = $this->session->userdata('captchaCode');
-			if($inputCaptcha === $sessCaptcha)
-			{            
+		    	$sessCaptcha = $this->session->userdata('captchaCode');
+		    	if($inputCaptcha === $sessCaptcha)
+		    	{
 				$fname = $this->input->post('fname');
 				$lname = $this->input->post('lname');
 				$mobile = $this->input->post('mobile');
@@ -71,13 +71,13 @@ class Login extends CI_Controller {
 					$insertdata = $this->Loginmodel->insert($fname,$lname,$mobile,$email,$password,$companyname,$designation,$companysize);
 					$this->session->set_flashdata("success","Record Inserted");
 					return redirect('Home/indexhome');
-				}	
+				}
 			}
 			else
-           		{
+            		{
 				echo 'Captcha code does not match, please try again.';
 				$this->index();
-            		}
+			}
 		}
 		else
 		{
@@ -86,9 +86,53 @@ class Login extends CI_Controller {
 		}
 	}
 
+	public function valid_password($password = '')
+	{
+		$password = trim($password);
+		$regex_lowercase = '/[a-z]/';
+		$regex_uppercase = '/[A-Z]/';
+		$regex_number = '/[0-9]/';
+		$regex_special = '/[!@#$%^&*()\-_=+{};:,<.>§~]/';
+		if (empty($password))
+		{
+			$this->form_validation->set_message('valid_password', 'The {field} field is required.');
+			return FALSE;
+		}
+		if (preg_match_all($regex_lowercase, $password) < 1)
+		{
+			$this->form_validation->set_message('valid_password', 'The {field} field must be at least one lowercase letter.');
+			return FALSE;
+		}
+		if (preg_match_all($regex_uppercase, $password) < 1)
+		{
+			$this->form_validation->set_message('valid_password', 'The {field} field must be at least one uppercase letter.');
+			return FALSE;
+		}
+		if (preg_match_all($regex_number, $password) < 1)
+		{
+			$this->form_validation->set_message('valid_password', 'The {field} field must have at least one number.');
+			return FALSE;
+		}
+		if (preg_match_all($regex_special, $password) < 1)
+		{
+			$this->form_validation->set_message('valid_password', 'The {field} field must have at least one special character.' . ' ' . htmlentities('!@#$%^&*()\-_=+{};:,<.>§~'));
+			return FALSE;
+		}
+		if (strlen($password) < 5)
+		{
+			$this->form_validation->set_message('valid_password', 'The {field} field must be at least 5 characters in length.');
+			return FALSE;
+		}
+		if (strlen($password) > 32)
+		{
+			$this->form_validation->set_message('valid_password', 'The {field} field cannot exceed 32 characters in length.');
+			return FALSE;
+		}
+		return TRUE;
+	}
+
 	public function refresh()
 	{
-		// Captcha configuration
 		$config = array(
 		    'img_path'      => 'uploadss/',
 		    'img_url'       => base_url().'uploadss/',
@@ -104,7 +148,7 @@ class Login extends CI_Controller {
 		$this->session->set_userdata('captchaCode',$captcha['word']);
 
 		echo $captcha['image'];
-    	}
+	}
 
 	public function deletedata($id)
 	{
