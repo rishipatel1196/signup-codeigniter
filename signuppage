@@ -3,9 +3,13 @@
 <head>
 	<title>Login Page</title>
 
-	<!-- jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<!-- captcha refresh code -->
+	<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
 <script>
 	$(document).ready(function(){
     $('.refreshCaptcha').on('click', function(){
@@ -17,56 +21,90 @@
 </script>
 </head>
 <body>
-	<?php
+	<div class="container">
+  <h2>Signup form</h2>
+  	<?php
 		if ($demo = $this->session->flashdata('danger')): 
 	?>
-	<?php
-		echo $demo;
-	?>
+	<div class="alert alert-danger">
+		<?php
+			echo $demo;
+		?>
+	</div>
 	<?php endif;?>
 	<?php
 		if ($demo = $this->session->flashdata('success')): 
 	?>
-	<?php
-		echo $demo;
-	?>
+	<div class="alert alert-success">
+		<?php
+			echo $demo;
+		?>	
+	</div>
 	<?php endif;?>
-	<br>
-	<form method="post" action="loginerror">
-		Fname: <input type="text" name="fname" value="<?php echo set_value('fname'); ?>">
-		<?php echo form_error('fname');?>
-		<br><br>
-		Lname: <input type="text" name="lname" value="<?php echo set_value('lname'); ?>">
-		<?php echo form_error('lname');?>
-		<br><br>
-		Mobile: <input type="text" name="mobile" value="<?php echo set_value('mobile'); ?>">
-		<?php echo form_error('mobile');?>
-		<br><br>
-		Email: <input type="text" name="email" value="<?php echo set_value('email'); ?>">
-		<?php echo form_error('email');?>
-		<br><br>
-		Password: <input type="text" name="password" value="<?php echo set_value('password'); ?>">
-		<?php echo form_error('password');?>
-		<br><br>
-		Company Name: <input type="text" name="companyname" value="<?php echo set_value('companyname'); ?>">
-		<?php echo form_error('companyname');?>
-		<br><br>
-		Designation: <input type="text" name="designation" value="<?php echo set_value('designation'); ?>">
-		<?php echo form_error('designation');?>
-		<br><br>
-		Company Size: <input type="text" name="companysize" value="<?php echo set_value('companysize'); ?>">
-		<?php echo form_error('companysize');?>
-		<br><br>
-		<p id="captImg"><?php echo $captchaImg; ?></p>
-		<p>Can't read the image? click <a href="javascript:void(0);" class="refreshCaptcha">here</a> to refresh.</p>
-		Enter the code : 
-	    <input type="text" name="captcha" value=""/>
-	    <br><br>
-		<input type="submit" name="submit" value="submit">
-	</form>
-	
-	<br><br>
-	<table border="1">
+
+  <form method="post" action="loginerror">
+    <div class="form-group md">
+      <label for="fname">First Name:</label>
+      <input type="text" class="form-control" name="fname" value="<?php echo set_value('fname'); ?>">
+      <?php echo form_error('fname', '<div class="alert alert-danger">', '</div>');?>
+    </div>
+    <div class="form-group md">
+      <label for="lname">Last Name:</label>
+      <input type="text" class="form-control" name="lname" value="<?php echo set_value('lname'); ?>">
+      <?php echo form_error('lname', '<div class="alert alert-danger">', '</div>');?>
+    </div>
+    <div class="form-group md">
+      <label for="mobile">Mobile:</label>
+      <input type="text" class="form-control" name="mobile" value="<?php echo set_value('mobile'); ?>">
+      <?php echo form_error('mobile', '<div class="alert alert-danger">', '</div>');?>
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" class="form-control" name="email" value="<?php echo set_value('email'); ?>">
+      <?php echo form_error('email', '<div class="alert alert-danger">', '</div>');?>
+    </div>
+    <div class="form-group">
+      <label for="pwd">Password:</label>
+      <input type="password" class="form-control" name="password" value="<?php echo set_value('password'); ?>">
+      <?php echo form_error('password', '<div class="alert alert-danger">', '</div>');?>
+    </div>
+    <div class="form-group">
+      <label for="cname">Company Name:</label>
+      <input type="text" class="form-control" name="companyname" value="<?php echo set_value('companyname');?>">
+      <?php echo form_error('companyname', '<div class="alert alert-danger">', '</div>');?>
+    </div>
+    <div class="form-group">
+      <label for="designation">Designation:</label>
+      <input type="text" class="form-control" name="designation" value="<?php echo set_value('designation'); ?>">
+      <?php echo form_error('designation', '<div class="alert alert-danger">', '</div>');?>
+    </div>
+    <div class="form-group">
+      <label for="companysize">Company Size:</label>
+      <input type="text" class="form-control" name="companysize" value="<?php echo set_value('companysize'); ?>">
+      <?php echo form_error('companysize', '<div class="alert alert-danger">', '</div>');?>
+    </div>
+    <p id="captImg"><?php echo $captchaImg; ?></p>
+	<p>Can't read the image? click <a href="javascript:void(0);" class="refreshCaptcha">here</a> to refresh.</p>
+	Enter the code : 
+	<div class="form-group">
+		<input type="text" class="form-control" name="captcha" value=""/>
+		<?php echo form_error('captcha', '<div class="alert alert-danger">', '</div>');?>	
+		<?php
+			if ($demo = $this->session->flashdata('captcha_danger')): 
+		?>
+		<div class="alert alert-danger">
+			<?php
+				echo $demo;
+			?>
+		</div>
+		<?php endif;?>
+	</div>
+    
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+
+  <br><br>
+	<table class="table table-striped">
 		<tbody>
 			<tr>
 				<td>First name</td>
@@ -94,8 +132,6 @@
 				<td><?php echo $value->companysize; ?></td>
 				<td>
 					<?php
-						echo anchor(site_url(''),'update');
-						echo "|";
 						echo anchor(site_url('Login/deletedata/'.$value->id),'delete');
 					?>
 				</td>
@@ -105,5 +141,6 @@
 			?>
 		</tbody>
 	</table>
+</div>
 </body>
 </html>
