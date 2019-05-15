@@ -12,22 +12,22 @@ class Login extends CI_Controller {
 	public function index()
 	{
 		$config = array(
-            'img_path'      => 'uploadss/',
-            'img_url'       => base_url().'uploadss/',
-            'font_path'     => base_url().'system/fonts/texb.ttf',
-            'img_width'     => '200',
-            'img_height'    => 90,
-            'word_length'   => 3,
-            'font_size'     => 25
-        );
-        $captcha = create_captcha($config);
-        
-        // Unset previous captcha and set new captcha word
-        $this->session->unset_userdata('captchaCode');
-        $this->session->set_userdata('captchaCode', $captcha['word']);
-        
-        // Pass captcha image to view
-        $fetch['captchaImg'] = $captcha['image'];
+		    'img_path'      => 'uploadss/',
+		    'img_url'       => base_url().'uploadss/',
+		    'font_path'     => base_url().'system/fonts/texb.ttf',
+		    'img_width'     => '200',
+		    'img_height'    => 90,
+		    'word_length'   => 3,
+		    'font_size'     => 25
+		);
+		$captcha = create_captcha($config);
+
+		// Unset previous captcha and set new captcha word
+		$this->session->unset_userdata('captchaCode');
+		$this->session->set_userdata('captchaCode', $captcha['word']);
+
+		// Pass captcha image to view
+		$fetch['captchaImg'] = $captcha['image'];
 
 		$fetch['data'] = $this->Loginmodel->alldata();
 		$this->load->view('login',$fetch);
@@ -45,47 +45,39 @@ class Login extends CI_Controller {
 		$this->form_validation->set_rules('companysize', 'Companysize', 'required|numeric');
 
 		if($this->form_validation->run())
-        {
-        	$inputCaptcha = $this->input->post('captcha');
-            $sessCaptcha = $this->session->userdata('captchaCode');
-            if($inputCaptcha === $sessCaptcha)
-            {
-            	echo 'Captcha code matched.';
-            
-					$fname = $this->input->post('fname');
-					$lname = $this->input->post('lname');
-					$mobile = $this->input->post('mobile');
-					$email = $this->input->post('email');
-					$password = $this->input->post('password');
-					$companyname = $this->input->post('companyname');
-					$designation = $this->input->post('designation');
-					$companysize = $this->input->post('companysize');
+		{
+			$inputCaptcha = $this->input->post('captcha');
+			$sessCaptcha = $this->session->userdata('captchaCode');
+			if($inputCaptcha === $sessCaptcha)
+			{            
+				$fname = $this->input->post('fname');
+				$lname = $this->input->post('lname');
+				$mobile = $this->input->post('mobile');
+				$email = $this->input->post('email');
+				$password = $this->input->post('password');
+				$companyname = $this->input->post('companyname');
+				$designation = $this->input->post('designation');
+				$companysize = $this->input->post('companysize');
 
-					$checkmobile = $this->Loginmodel->checkmobile($mobile,$email);
+				$checkmobile = $this->Loginmodel->checkmobile($mobile,$email);
 
-					if($checkmobile)
-					{
-						$this->session->set_flashdata("danger","Mobile Number or Email exist.....");
-						return redirect('Login/index');	
-					}
-					else
-					{
-						$insertdata = $this->Loginmodel->insert($fname,$lname,$mobile,$email,$password,$companyname,$designation,$companysize);
-						$this->session->set_flashdata("success","Record Inserted");
-						return redirect('Home/indexhome');
-					}	
-				// }
-				// else
-				// {
-				// 	$this->session->set_flashdata("danger","Please fill all the values properly");
-				// 	$this->index();
-				// }
+				if($checkmobile)
+				{
+					$this->session->set_flashdata("danger","Mobile Number or Email exist.....");
+					return redirect('Login/index');	
+				}
+				else
+				{
+					$insertdata = $this->Loginmodel->insert($fname,$lname,$mobile,$email,$password,$companyname,$designation,$companysize);
+					$this->session->set_flashdata("success","Record Inserted");
+					return redirect('Home/indexhome');
+				}	
 			}
 			else
-            {
-                echo 'Captcha code does not match, please try again.';
-                $this->index();
-            }
+           		{
+				echo 'Captcha code does not match, please try again.';
+				$this->index();
+            		}
 		}
 		else
 		{
@@ -94,79 +86,25 @@ class Login extends CI_Controller {
 		}
 	}
 
-	public function refresh(){
-        // Captcha configuration
-        $config = array(
-            'img_path'      => 'uploadss/',
-            'img_url'       => base_url().'uploadss/',
-            'font_path'     => base_url().'system/fonts/texb.ttf',
-            'img_width'     => '200',
-            'img_height'    => 90,
-            'word_length'   => 3,
-            'font_size'     => 25
-        );
-        $captcha = create_captcha($config);
-        
-        $this->session->unset_userdata('captchaCode');
-        $this->session->set_userdata('captchaCode',$captcha['word']);
-        
-        echo $captcha['image'];
-    }
-
-	public function upload($id)
+	public function refresh()
 	{
-		if(!empty($_FILES['imagename']['name']))
-        {
-                $config['upload_path'] = 'uploadss/';
-                $config['allowed_types'] = 'jpg|jpeg|png|gif';
-                $config['file_name'] = $_FILES['imagename']['name'];
-                
-                $this->load->library('upload',$config);
-                $this->upload->initialize($config);
-                
-                if($this->upload->do_upload('imagename'))
-                {
-                    $uploadData = $this->upload->data();
-                    $imagename = $uploadData['file_name'];
-                }
-                else
-                {
-                	echo "not upload";
-                }
-		}
-		else
-		{
-			echo "error";
-		}
-		$this->load->view('uploadimage');
-	}
+		// Captcha configuration
+		$config = array(
+		    'img_path'      => 'uploadss/',
+		    'img_url'       => base_url().'uploadss/',
+		    'font_path'     => base_url().'system/fonts/texb.ttf',
+		    'img_width'     => '200',
+		    'img_height'    => 90,
+		    'word_length'   => 3,
+		    'font_size'     => 25
+		);
+		$captcha = create_captcha($config);
 
-	public function uploadimageerror()
-	{
-		if(!empty($_FILES['imagename']['name']))
-        {
-                $config['upload_path'] = 'uploadss/';
-                $config['allowed_types'] = 'jpg|jpeg|png|gif';
-                $config['file_name'] = $_FILES['imagename']['name'];
-                
-                $this->load->library('upload',$config);
-                $this->upload->initialize($config);
-                
-                if($this->upload->do_upload('imagename'))
-                {
-                    $uploadData = $this->upload->data();
-                    $imagename = $uploadData['file_name'];
-                }
-                else
-                {
-                	echo "not upload";
-                }
-		}
-		else
-		{
-			echo "error";
-		}
-	}
+		$this->session->unset_userdata('captchaCode');
+		$this->session->set_userdata('captchaCode',$captcha['word']);
+
+		echo $captcha['image'];
+    	}
 
 	public function deletedata($id)
 	{
