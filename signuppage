@@ -97,8 +97,6 @@
 						echo anchor(site_url(''),'update');
 						echo "|";
 						echo anchor(site_url('Login/deletedata/'.$value->id),'delete');
-						echo "|";
-						echo anchor(site_url('Login/upload/'.$value->id),'upload');
 					?>
 				</td>
 			</tr>
