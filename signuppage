@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login Page</title>
+
+	<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- captcha refresh code -->
+<script>
+	$(document).ready(function(){
+    $('.refreshCaptcha').on('click', function(){
+        $.get('<?php echo base_url().'captcha/refresh'; ?>', function(data){
+            $('#captImg').html(data);
+        });
+    });
+});
+</script>
+</head>
+<body>
+	<?php
+		if ($demo = $this->session->flashdata('danger')): 
+	?>
+	<?php
+		echo $demo;
+	?>
+	<?php endif;?>
+	<?php
+		if ($demo = $this->session->flashdata('success')): 
+	?>
+	<?php
+		echo $demo;
+	?>
+	<?php endif;?>
+	<br>
+	<form method="post" action="loginerror">
+		Fname: <input type="text" name="fname" value="<?php echo set_value('fname'); ?>">
+		<?php echo form_error('fname');?>
+		<br><br>
+		Lname: <input type="text" name="lname" value="<?php echo set_value('lname'); ?>">
+		<?php echo form_error('lname');?>
+		<br><br>
+		Mobile: <input type="text" name="mobile" value="<?php echo set_value('mobile'); ?>">
+		<?php echo form_error('mobile');?>
+		<br><br>
+		Email: <input type="text" name="email" value="<?php echo set_value('email'); ?>">
+		<?php echo form_error('email');?>
+		<br><br>
+		Password: <input type="text" name="password" value="<?php echo set_value('password'); ?>">
+		<?php echo form_error('password');?>
+		<br><br>
+		Company Name: <input type="text" name="companyname" value="<?php echo set_value('companyname'); ?>">
+		<?php echo form_error('companyname');?>
+		<br><br>
+		Designation: <input type="text" name="designation" value="<?php echo set_value('designation'); ?>">
+		<?php echo form_error('designation');?>
+		<br><br>
+		Company Size: <input type="text" name="companysize" value="<?php echo set_value('companysize'); ?>">
+		<?php echo form_error('companysize');?>
+		<br><br>
+		<p id="captImg"><?php echo $captchaImg; ?></p>
+		<p>Can't read the image? click <a href="javascript:void(0);" class="refreshCaptcha">here</a> to refresh.</p>
+		Enter the code : 
+	    <input type="text" name="captcha" value=""/>
+	    <br><br>
+		<input type="submit" name="submit" value="submit">
+	</form>
+	
+	<br><br>
+	<table border="1">
+		<tbody>
+			<tr>
+				<td>First name</td>
+				<td>Last name</td>
+				<td>Mobile number</td>
+				<td>Email</td>
+				<td>Password</td>
+				<td>Company Name</td>
+				<td>Designation</td>
+				<td>Company size</td>
+				<td>Action</td>
+			</tr>
+			<?php
+				foreach ($data as $value) 
+				{
+			?>
+			<tr>
+				<td><?php echo $value->fname; ?></td>
+				<td><?php echo $value->lname; ?></td>
+				<td><?php echo $value->mobile; ?></td>
+				<td><?php echo $value->email; ?></td>
+				<td><?php echo $value->password; ?></td>
+				<td><?php echo $value->companyname; ?></td>
+				<td><?php echo $value->designation; ?></td>
+				<td><?php echo $value->companysize; ?></td>
+				<td>
+					<?php
+						echo anchor(site_url(''),'update');
+						echo "|";
+						echo anchor(site_url('Login/deletedata/'.$value->id),'delete');
+						echo "|";
+						echo anchor(site_url('Login/upload/'.$value->id),'upload');
+					?>
+				</td>
+			</tr>
+			<?php
+				}
+			?>
+		</tbody>
+	</table>
+</body>
+</html>
